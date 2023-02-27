@@ -10,5 +10,6 @@ public class StudentController {
 	@PostMapping("/student")
 	public String createNewStudent() {
 		return "student id = 12398";
+		
 	}
 }
