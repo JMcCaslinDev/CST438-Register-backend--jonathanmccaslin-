@@ -77,6 +77,16 @@ public class JunitTestSchedule {
 	private MockMvc mvc;
 
 	@Test
+	public void addStudent()  throws Exception {
+	
+		MockHttpServletResponse response;
+	
+		
+		//test go here
+	
+	}
+	
+	@Test
 	public void addCourse()  throws Exception {
 		
 		MockHttpServletResponse response;
