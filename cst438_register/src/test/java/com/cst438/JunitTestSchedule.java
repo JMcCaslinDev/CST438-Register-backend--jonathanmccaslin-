@@ -1,7 +1,6 @@
 package com.cst438;
 
 import static org.mockito.ArgumentMatchers.any;
-
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
 
@@ -61,6 +60,7 @@ public class JunitTestSchedule {
 	public static final String TEST_STUDENT_NAME  = "test";
 	public static final int TEST_YEAR = 2021;
 	public static final String TEST_SEMESTER = "Fall";
+	public static final int TEST_STUDENT_ID = 0;
 
 	@MockBean
 	CourseRepository courseRepository;
@@ -91,7 +91,6 @@ public class JunitTestSchedule {
 		Student student = new Student();
 		student.setName(TEST_STUDENT_NAME);
 		student.setEmail(TEST_STUDENT_EMAIL);
-
 		
 		given(studentRepository.findByEmail(TEST_STUDENT_EMAIL)).willReturn(null);
 		given(studentRepository.save(any(Student.class))).willReturn(student);
@@ -107,7 +106,200 @@ public class JunitTestSchedule {
 		// Verify that the return status is OK (value 200) 
 		assertEquals(200, response.getStatus());
 
+		
+		//redo given statement so find by email returns student so we can check if the correct info was stored and test for it
+		given(studentRepository.findByEmail(TEST_STUDENT_EMAIL)).willReturn(student);
+	    Student addedStudent = studentRepository.findByEmail(TEST_STUDENT_EMAIL);
+	    System.out.println(addedStudent);
+	    assertEquals(TEST_STUDENT_NAME, addedStudent.getName());
+	    assertEquals(TEST_STUDENT_EMAIL, addedStudent.getEmail());
+
 	}
+	
+	
+	@Test
+	public void addStudentHold()  throws Exception {
+	
+		MockHttpServletResponse response;
+		
+		
+
+		//create test student to add to student repository
+		Student student = new Student();
+		student.setName(TEST_STUDENT_NAME);
+		student.setEmail(TEST_STUDENT_EMAIL);
+		
+		given(studentRepository.findByEmail(TEST_STUDENT_EMAIL)).willReturn(null);
+		given(studentRepository.save(any(Student.class))).willReturn(student);
+		
+
+		response = mvc.perform(
+			  MockMvcRequestBuilders
+                .post("/student")
+                .param("name", "Test")
+                .param("email", "test@csumb.edu"))
+              .andReturn().getResponse();
+
+		// Verify that the return status is OK (value 200) 
+		assertEquals(200, response.getStatus());
+
+		
+		//redo given statement so find by email returns student so we can check if the correct info was stored and test for it
+		given(studentRepository.findByEmail(TEST_STUDENT_EMAIL)).willReturn(student);
+	    Student addedStudent = studentRepository.findByEmail(TEST_STUDENT_EMAIL);
+	    System.out.println(addedStudent);
+	    assertEquals(TEST_STUDENT_NAME, addedStudent.getName());
+	    assertEquals(TEST_STUDENT_EMAIL, addedStudent.getEmail());
+	    
+	    
+	    
+	    
+	    
+	    
+	    
+	    
+	    
+	    
+	    //begin hold junit test
+//	    Optional<Student> optionalStudent = Optional.ofNullable(student);
+	    
+
+	    
+	    given(studentRepository.findById(TEST_STUDENT_ID)).willReturn(Optional.of(student));
+	    
+	    Optional <Student> addedStudent2 = studentRepository.findById(TEST_STUDENT_ID);
+	    System.out.println(addedStudent2);
+	    System.out.println("test2");
+	    //if hold is not set or null
+	    
+//	    if(addedStudent2.get().getStatus().equals("HOLD")) {
+//	    	 System.out.println("HOLD FOUND");
+//	    } else if(addedStudent2.get().getStatus().equals(null)) {
+//	    	 System.out.println("null FOUND");
+//	    } else {
+//	    	System.out.println("Else PATH");
+//	    }
+	    if(addedStudent2.isPresent() && "HOLD".equals(addedStudent2.get().getStatus())) {
+	        System.out.println("HOLD FOUND");
+	    } else if(addedStudent2.isPresent() && addedStudent2.get().getStatus() == null) {
+	        System.out.println("null FOUND");
+	        
+	        //set HOLD here
+	        //postman put call
+		    response = mvc.perform(
+					  MockMvcRequestBuilders
+					    .put("/student/hold/{id}", TEST_STUDENT_ID)  // replace 0 with the actual value of id
+				        .param("id", String.valueOf(TEST_STUDENT_ID)))
+		              .andReturn().getResponse();
+		    
+		    System.out.println("test3");
+		    
+				// Verify that the return status is OK (value 200) 
+				assertEquals(404, response.getStatus());
+	        
+	        
+	    } else {
+	        System.out.println("Else PATH");
+	    }
+
+	    
+	    
+	   
+	    
+	}
+	
+	
+	@Test
+	public void removeStudentHold()  throws Exception {
+	
+		MockHttpServletResponse response;
+		
+		
+
+		//create test student to add to student repository
+		Student student = new Student();
+		student.setName(TEST_STUDENT_NAME);
+		student.setEmail(TEST_STUDENT_EMAIL);
+		
+		given(studentRepository.findByEmail(TEST_STUDENT_EMAIL)).willReturn(null);
+		given(studentRepository.save(any(Student.class))).willReturn(student);
+		
+
+		response = mvc.perform(
+			  MockMvcRequestBuilders
+                .post("/student")
+                .param("name", "Test")
+                .param("email", "test@csumb.edu"))
+              .andReturn().getResponse();
+
+		// Verify that the return status is OK (value 200) 
+		assertEquals(200, response.getStatus());
+
+		
+		//redo given statement so find by email returns student so we can check if the correct info was stored and test for it
+		given(studentRepository.findByEmail(TEST_STUDENT_EMAIL)).willReturn(student);
+	    Student addedStudent = studentRepository.findByEmail(TEST_STUDENT_EMAIL);
+	    System.out.println(addedStudent);
+	    assertEquals(TEST_STUDENT_NAME, addedStudent.getName());
+	    assertEquals(TEST_STUDENT_EMAIL, addedStudent.getEmail());
+	    
+	    
+	    
+	    
+	    
+	    
+	    
+	    
+	    
+	    
+	    //begin hold junit test
+//	    Optional<Student> optionalStudent = Optional.ofNullable(student);
+	    
+
+	    
+	    given(studentRepository.findById(TEST_STUDENT_ID)).willReturn(Optional.of(student));
+	    
+	    Optional <Student> addedStudent2 = studentRepository.findById(TEST_STUDENT_ID);
+	    System.out.println(addedStudent2);
+	    System.out.println("test2");
+	    //if hold is not set or null
+	    
+//	    if(addedStudent2.get().getStatus().equals("HOLD")) {
+//	    	 System.out.println("HOLD FOUND");
+//	    } else if(addedStudent2.get().getStatus().equals(null)) {
+//	    	 System.out.println("null FOUND");
+//	    } else {
+//	    	System.out.println("Else PATH");
+//	    }
+	    if(addedStudent2.isPresent() && "HOLD".equals(addedStudent2.get().getStatus())) {
+	        System.out.println("HOLD FOUND");
+	        
+	      //postman put call
+		    response = mvc.perform(
+					  MockMvcRequestBuilders
+					    .put("/student/hold/{id}", TEST_STUDENT_ID)  // replace 0 with the actual value of id
+				        .param("id", String.valueOf(TEST_STUDENT_ID)))
+		              .andReturn().getResponse();
+		    
+		    System.out.println("test3");
+		    
+				// Verify that the return status is OK (value 200) 
+				assertEquals(404, response.getStatus());
+	    } else if(addedStudent2.isPresent() && addedStudent2.get().getStatus() == null) {
+	        System.out.println("null FOUND");
+	        
+
+	        
+	    } else {
+	        System.out.println("Else PATH");
+	    }
+
+	    
+	    
+	    
+	    
+	}
+	
 	
 	
 	
