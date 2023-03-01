@@ -24,6 +24,7 @@ import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 
 import com.cst438.controller.ScheduleController;
+import com.cst438.controller.StudentController;
 import com.cst438.domain.Course;
 import com.cst438.domain.CourseRepository;
 import com.cst438.domain.Enrollment;
@@ -49,7 +50,7 @@ import org.springframework.test.context.ContextConfiguration;
  *  addFilters=false turns off security.  (I could not get security to work in test environment.)
  *  WebMvcTest is needed for test environment to create Repository classes.
  */
-@ContextConfiguration(classes = { ScheduleController.class })
+@ContextConfiguration(classes = { ScheduleController.class, StudentController.class })
 @AutoConfigureMockMvc(addFilters = false)
 @WebMvcTest
 public class JunitTestSchedule {
@@ -76,15 +77,41 @@ public class JunitTestSchedule {
 	@Autowired
 	private MockMvc mvc;
 
+	
+	
+	
+	
+	
 	@Test
 	public void addStudent()  throws Exception {
 	
 		MockHttpServletResponse response;
-	
+
+		//create test student to add to student repository
+		Student student = new Student();
+		student.setName(TEST_STUDENT_NAME);
+		student.setEmail(TEST_STUDENT_EMAIL);
+
 		
-		//test go here
-	
+		given(studentRepository.findByEmail(TEST_STUDENT_EMAIL)).willReturn(null);
+		given(studentRepository.save(any(Student.class))).willReturn(student);
+		
+
+		response = mvc.perform(
+			  MockMvcRequestBuilders
+                .post("/student")
+                .param("name", "Test")
+                .param("email", "test@csumb.edu"))
+              .andReturn().getResponse();
+
+		// Verify that the return status is OK (value 200) 
+		assertEquals(200, response.getStatus());
+
 	}
+	
+	
+	
+	
 	
 	@Test
 	public void addCourse()  throws Exception {
@@ -173,6 +200,9 @@ public class JunitTestSchedule {
 		// verify that repository find method was called.
 		verify(enrollmentRepository, times(1)).findStudentSchedule(TEST_STUDENT_EMAIL, TEST_YEAR, TEST_SEMESTER);
 	}
+	
+	
+	
 	
 	@Test
 	public void dropCourse()  throws Exception {
