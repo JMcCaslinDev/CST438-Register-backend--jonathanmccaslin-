@@ -7,9 +7,10 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import com.cst438.domain.Student;
 import com.cst438.domain.StudentRepository;
-
+import org.springframework.web.bind.annotation.CrossOrigin;
 
 @RestController
+@CrossOrigin(origins = "*")
 public class StudentController {
 
 	@Autowired
@@ -109,7 +110,5 @@ public class StudentController {
 	
 	
 }
-
-
 
 
